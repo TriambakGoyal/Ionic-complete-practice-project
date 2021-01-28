@@ -27,11 +27,11 @@ export class AuthPage implements OnInit {
   ionViewDidEnter()
   {
     this.menucontrl.enable(false,'menu1')
-
   }
-  ionViewDidLeave()
+  ionViewWillLeave()
   {
     this.menucontrl.enable(true,'menu1')
   }
+  
 
 }

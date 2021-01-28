@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { IonItemSliding, MenuController } from '@ionic/angular';
 import { Places } from '../places.model';
 import { PlacesService } from '../places.service';
 
@@ -13,20 +14,28 @@ export class OfferPage implements OnInit {
   loadedPlaces:Places[];
 
   constructor(private placesService:PlacesService,
-    private menucontrl:MenuController
+    private menucontrl:MenuController,
+    private route:Router
     ) { }
 
   ngOnInit() {
     this.loadedPlaces=this.placesService.getAllPlaces();
   }
-  ionViewWillEnter()
+  
+  ionViewDidEnter()
   {
-    this.menucontrl.enable(true,"menu1")
+    this.menucontrl.enable(true,'menu1')
 
+    console.log('Offer Did Enter')
   }
-  ionViewWillLeave()
+  
+  
+  
+
+  onSlide(offerId:string,slider:IonItemSliding)
   {
-    this.menucontrl.enable(false,"menu1")
+    slider.close();
+    this.route.navigateByUrl('/places/offer/edit-offer/'+offerId);
 
   }
 

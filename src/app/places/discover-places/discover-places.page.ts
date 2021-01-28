@@ -20,15 +20,12 @@ export class DiscoverPlacesPage implements OnInit {
     this.loadedPlaces=this.placesService.getAllPlaces();
 
   }
-  ionViewWillEnter()
+  ionViewDidEnter()
   {
-    this.menucontrl.enable(true,"menu1")
+    this.menucontrl.enable(true,'menu1')
+    console.log('Discover Did Enter')
 
   }
-  ionViewWillLeave()
-  {
-    this.menucontrl.enable(false,"menu1")
 
-  }
 
 }

@@ -1,9 +1,32 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot='start'>
+      <ion-menu-button>
+      </ion-menu-button>
+    </ion-buttons>
     <ion-title>Bookings</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
 
+  <ion-grid>
+    <ion-row *ngFor="let i of loadedBooking">
+      <ion-col size='12' size-md='6' offset-md="3">
+        <ion-item-sliding #slider>
+          <ion-item>
+            <ion-label>
+              <h2>{{i.placeName}}</h2>
+              <ion-text>No. of Guest: {{i.guestNumber}}</ion-text>
+            </ion-label>
+          </ion-item>
+          <ion-item-options>
+            <ion-item-option color='danger' (click)="onDelete(i.id,slider)">
+              <ion-icon name="trash" slot='icon-only'></ion-icon>
+            </ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>
