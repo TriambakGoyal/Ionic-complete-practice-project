@@ -1,0 +1,65 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+
+    </ion-buttons>
+    <ion-title>Discover</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col size-md="8" offset-md="2" class="ion-text-center">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>
+                {{loadedPlaces[0].name}}
+            </ion-card-title>
+            <ion-card-subtitle>
+              {{loadedPlaces[0].price | currency}} / Night
+            </ion-card-subtitle>
+          </ion-card-header>
+          <ion-img [src]="loadedPlaces[0].imageUrl"></ion-img>
+          <ion-card-content>
+            <ion-label>
+              <h2>
+                <strong>
+                  {{loadedPlaces[0].desc}}
+                </strong>
+              </h2>
+            </ion-label>
+          </ion-card-content>
+          <div class="ion-text-right">
+            <ion-button fill="clear" color="primary" [routerLink]="['/places/discover-places/',loadedPlaces[0].id]">
+              Show More
+            </ion-button>
+          </div>
+        </ion-card>
+      </ion-col>
+    
+    </ion-row>
+    <ion-row>
+      <ion-col size-md="8" offset-md="2" class="ion-text-center">
+        <!-- Detail in ion-item gives a forward arrow to it which indicates that it will go forward -->
+        <ion-item *ngFor="let i of loadedPlaces.slice(1)" 
+        [routerLink]="['/places/discover-places/',i.id]"
+        detail>
+          <ion-thumbnail slot="start">
+            <ion-img [src]="i.imageUrl"></ion-img>
+          </ion-thumbnail>
+          <ion-label >
+            <h2>{{i.name}}</h2>
+            <strong>{{i.desc}}</strong>
+          </ion-label>
+          <!-- <ion-label class="ion-text-center ion-no-margin">
+           {{i.price | currency}}
+          </ion-label> -->
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

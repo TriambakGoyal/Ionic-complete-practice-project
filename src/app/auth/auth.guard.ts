@@ -1,0 +1,37 @@
+import { Injectable } from '@angular/core';
+import { CanActivate, CanLoad, Route, UrlSegment, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { AuthService } from './auth.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthGuard implements CanLoad {
+
+  // ##This should not be used as we are lazy loading so the code of pages will get downloaded but will not be used, so its of no use here
+  // canActivate(
+  //   next: ActivatedRouteSnapshot,
+  //   state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+  //   return true;
+  // }
+
+  //## Service can use other Service by adding constructor
+
+  constructor(
+    private authService:AuthService,
+    private route:Router
+  )
+  {
+
+  }
+  canLoad(
+    route: Route,
+    segments: UrlSegment[]): Observable<boolean> | Promise<boolean> | boolean {
+
+      if(!this.authService.userAuthenticate)
+      {
+        this.route.navigateByUrl('/auth')
+      }
+    return this.authService.userAuthenticate;
+  }
+}

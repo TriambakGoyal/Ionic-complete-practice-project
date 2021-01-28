@@ -1,0 +1,20 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Book {{selectedPlace.name}}
+    </ion-title>
+    <ion-button (click)="onDismiss()" fill="clear" slot="end">
+      Close
+      <ion-icon name="close-outline" slot='end'></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-text-center">
+
+<p>{{selectedPlace.desc}}</p>
+
+<ion-button fill="outline" (click)="onBookPlace()">
+  Pay {{selectedPlace.price | currency}}
+  <ion-icon slot="end" name="cash-outline"></ion-icon>
+</ion-button>
+</ion-content>

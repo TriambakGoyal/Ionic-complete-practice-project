@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="menu1"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Offers</ion-title>
+    <ion-buttons slot="end" routerLink="new-offers">
+      <ion-icon name="add" slot="icon-only"></ion-icon>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    
+    <ion-row>
+      <ion-col size-md="8" offset-md="2" class="ion-text-center">
+        <!-- Detail in ion-item gives a forward arrow to it which indicates that it will go forward -->
+        <ion-item *ngFor="let i of loadedPlaces" 
+        [routerLink]="['/places/offer/',i.id]"
+        detail>
+          <ion-thumbnail slot="start">
+            <ion-img [src]="i.imageUrl"></ion-img>
+          </ion-thumbnail>
+          <ion-label >
+            <h2>{{i.name}}</h2>
+            <strong>{{i.desc}}</strong>
+          </ion-label>
+          <!-- <ion-label class="ion-text-center ion-no-margin">
+           {{i.price | currency}}
+          </ion-label> -->
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

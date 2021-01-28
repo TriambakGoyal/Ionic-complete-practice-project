@@ -1,0 +1,16 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/places/discover-places" routerDirection="backward">
+        <ion-icon name='arrow-back-outline'></ion-icon>
+      </ion-back-button>
+    </ion-buttons>
+    <ion-title>{{loadedPlace.name}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+<ion-button class="ion-margin" (click)="onBook()">
+  Book
+</ion-button>
+</ion-content>
