@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MenuController } from '@ionic/angular';
+import { LoadingController, MenuController } from '@ionic/angular';
+import { element } from 'protractor';
 import { AuthService } from './auth.service';
 
 @Component({
@@ -13,7 +14,8 @@ export class AuthPage implements OnInit {
   constructor(
     private authService:AuthService,
     private route:Router,
-    private menucontrl:MenuController
+    private menucontrl:MenuController,
+    private loadingContoller:LoadingController
   ) { }
 
   ngOnInit() {
@@ -21,7 +23,20 @@ export class AuthPage implements OnInit {
 
   onLogin(){
     this.authService.login();
-    this.route.navigateByUrl('/places/discover-places')
+    this.loadingContoller.create({
+      message:"Logging In...",
+      spinner:'lines',
+      keyboardClose:true
+    }).then(ele=>
+      {
+        ele.present();
+        setTimeout(()=>
+        {
+          ele.dismiss();
+          this.route.navigateByUrl('/places/discover-places')
+        },1500);
+      });
+   
   }
 
   ionViewDidEnter()
