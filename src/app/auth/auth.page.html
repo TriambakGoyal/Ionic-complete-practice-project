@@ -5,7 +5,48 @@
 </ion-header>
 
 <ion-content>
-<ion-button class="ion-margin" color="primary" (click)="onLogin()">
-  Login
-</ion-button>
+  <form #form="ngForm" (ngSubmit)='onSubmit(form)'>
+  <ion-grid>
+    <ion-row>
+      <ion-col size-sm='6' offset-sm='3' >
+        <ion-list class="ion-padding">
+          <ion-item >
+            <ion-label position='floating'>
+              Email ID
+            </ion-label>
+            <ion-input type='email' name='email' 
+            ngModel required email #email='ngModel'></ion-input>
+          </ion-item>
+          <ion-item lines='none' *ngIf='email?.invalid && email?.touched'>
+            <ion-label color='danger'>
+              * Email Id must be entered
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label position='floating'>
+              Password
+            </ion-label>
+            <ion-input type='password' name='password' 
+            ngModel required minlength='8' #password='ngModel'></ion-input>
+          </ion-item>
+          <ion-item lines='none' *ngIf='password?.invalid && password?.touched'>
+            <ion-label color='danger'>
+              * Password must be entered
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+    <ion-row class="ion-justify-content-center">
+      <ion-col size='4'>
+        <ion-button type='submit' [disabled]="form?.errors || form?.invalid" class="ion-margin ion-align-self-center" color="dark">
+          Login
+        </ion-button>
+        <ion-button type='submit' class="ion-margin ion-align-self-center" color="primary" (click)="onLogin()">
+          Login
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</form>
 </ion-content>

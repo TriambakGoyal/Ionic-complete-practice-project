@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoadingController, MenuController } from '@ionic/angular';
 import { element } from 'protractor';
@@ -48,5 +49,8 @@ export class AuthPage implements OnInit {
     this.menucontrl.enable(true,'menu1')
   }
   
-
+onSubmit(form:NgForm)
+{
+  console.log(form)
+}
 }
