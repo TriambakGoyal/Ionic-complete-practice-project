@@ -10,11 +10,67 @@
   </ion-toolbar>
 </ion-header>
 <ion-content class="ion-text-center">
+<form #form="ngForm" (ngSubmit)="onBookPlace(form)">
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating">
+            User Name
+          </ion-label>
+          <ion-input type="text" required ngModel name="name" placeholder="Full Name"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating">
+            No. of Guests
+          </ion-label>
+          <ion-select [ngModel]="2" name="guests">
+            <ion-select-option value='1'>1</ion-select-option>
+            <ion-select-option value='2'>2</ion-select-option>
+            <ion-select-option value='3'>3</ion-select-option>
+            <ion-select-option value='3'>4</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating">
+            Bookings From
+          </ion-label>
+          <ion-datetime name="bookfrom" 
+          [min]="2020-01-01" [max]="2021-01-01" 
+          display-format="MMM DD YYYY" 
+          picker-format="DD MMM YY" ngModel
+          #datefrom></ion-datetime>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating">
+            Bookings Till
+          </ion-label>
+          <ion-datetime name="bookto" 
+          [min]="datefrom.value" [max]="2021-01-01" 
+          display-format="MMM DD YYYY" 
+          picker-format="DD MMM YY" ngModel #dateto></ion-datetime>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button fill="outline" type="submit" expand="block" [disabled]="form?.invalid || !dateValid()">
+          Pay {{selectedPlace.price | currency}}
+          <ion-icon slot="end" name="cash-outline"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</form>
 
-<p>{{selectedPlace.desc}}</p>
-
-<ion-button fill="outline" (click)="onBookPlace()">
-  Pay {{selectedPlace.price | currency}}
-  <ion-icon slot="end" name="cash-outline"></ion-icon>
-</ion-button>
 </ion-content>

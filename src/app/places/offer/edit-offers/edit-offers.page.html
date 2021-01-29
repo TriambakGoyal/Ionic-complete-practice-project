@@ -5,10 +5,46 @@
         <ion-icon name='arrow-back-outline'></ion-icon>
       </ion-back-button>
       </ion-buttons>
-    <ion-title>edit-offers</ion-title>
+    <ion-title>Edit Offers</ion-title>
+    <ion-buttons slot='primary'>
+      <ion-button (click)="onEditOffer()" color='dark' [disabled]="form.invalid">
+        <ion-icon name='checkmark' slot='icon-only'>
+      
+        </ion-icon>
+      </ion-button>
+          </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+  <form [formGroup]='form'>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-item>
+            <ion-label position='floating'>
+              Place Name
+            </ion-label>
+            <ion-input type='text' autocorrect autocomplete formControlName='title'></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-item>
+            <ion-label position="floating">
+              Place Description
+            </ion-label>
+            <ion-textarea rows='4' formControlName='description' (ionChange)="charCount()"></ion-textarea>
+          </ion-item>
+          <p [ngStyle]="Count>180 || Count==0?{'color':'red'}:{'color':'green'}" style='text-align: right;margin:5px;'>{{Count}}/180</p>
+          <ion-item lines='none' *ngIf="form.get('description').invalid && form.get('description').touched ">
+            <ion-text>
+              Description must contain only character between 1 and 180
+            </ion-text>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
 </ion-content>

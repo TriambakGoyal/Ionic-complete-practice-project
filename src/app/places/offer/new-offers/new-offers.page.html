@@ -6,11 +6,18 @@
       </ion-back-button>
       </ion-buttons>
     <ion-title>New Offers</ion-title>
+    <ion-buttons slot='primary'>
+<ion-button (click)="onCreateOffer()" color='dark' [disabled]="form.invalid">
+  <ion-icon name='checkmark' slot='icon-only'>
+
+  </ion-icon>
+</ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+<form [formGroup]='form'>
   <ion-grid>
     <ion-row>
       <ion-col>
@@ -18,16 +25,24 @@
           <ion-label position='floating'>
             Place Name
           </ion-label>
-          <ion-input type='text' autocorrect autocomplete></ion-input>
+          <ion-input type='text' autocorrect autocomplete formControlName='title'></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-label position='floating'>
-          Place Description
-        </ion-label>
-        <ion-textarea rows='4'></ion-textarea>
+        <ion-item>
+          <ion-label position="floating">
+            Place Description
+          </ion-label>
+          <ion-textarea rows='4' formControlName='description' (ionChange)="charCount()"></ion-textarea>
+        </ion-item>
+        <p [ngStyle]="Count>180 || Count==0?{'color':'red'}:{'color':'green'}" style='text-align: right;margin:5px;'>{{Count}}/180</p>
+        <ion-item lines='none' *ngIf="form.get('description').invalid && form.get('description').touched ">
+          <ion-text>
+            Description must contain only character between 1 and 180
+          </ion-text>
+        </ion-item>
       </ion-col>
     </ion-row>
     <ion-row>
@@ -36,10 +51,31 @@
           <ion-label position='floating'>
               Price
           </ion-label>
-          <ion-input type='number'></ion-input>
+          <ion-input type='number' formControlName='price'></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
-  </ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position='floating'>
+            Available From          
+            </ion-label>
+            <ion-datetime min="2019-09-01" max="2020-09-01" formControlName='datefrom'>
 
+            </ion-datetime>        
+            </ion-item>
+           
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label position='floating'>
+              Available To
+          </ion-label>
+          <ion-datetime min="2019-09-01" max="2020-09-01" formControlName='dateto'></ion-datetime>    
+          </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</form>
 </ion-content>
