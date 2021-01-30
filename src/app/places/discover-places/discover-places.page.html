@@ -9,34 +9,46 @@
 </ion-header>
 
 <ion-content>
-<ion-segment value='all'>
+<ion-segment value='all' (ionChange)="onFilterUpdate($event)">
   <ion-segment-button value='all'>All Places</ion-segment-button>
   <ion-segment-button value='rec'>Recommended</ion-segment-button>
 </ion-segment>
-  <ion-grid>
+<ion-grid>
+  <ion-row>
+    <ion-col class="ion-justify-content-center">
+      <ion-item *ngIf="!recommendePlaces || recommendePlaces.length <= 0">
+        <ion-label style="text-align: center;">
+          No places recommended
+        </ion-label>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+</ion-grid>
+
+  <ion-grid *ngIf="recommendePlaces.length > 0">
     <ion-row>
       <ion-col size-md="8" offset-md="2" class="ion-text-center">
         <ion-card>
           <ion-card-header>
             <ion-card-title>
-                {{loadedPlaces[0].name}}
+                {{recommendePlaces[0].name}}
             </ion-card-title>
             <ion-card-subtitle>
-              {{loadedPlaces[0].price | currency}} / Night
+              {{recommendePlaces[0].price | currency}} / Night
             </ion-card-subtitle>
           </ion-card-header>
-          <ion-img [src]="loadedPlaces[0].imageUrl"></ion-img>
+          <ion-img [src]="recommendePlaces[0].imageUrl"></ion-img>
           <ion-card-content>
             <ion-label>
               <h2>
                 <strong>
-                  {{loadedPlaces[0].desc}}
+                  {{recommendePlaces[0].desc}}
                 </strong>
               </h2>
             </ion-label>
           </ion-card-content>
           <div class="ion-text-right">
-            <ion-button fill="clear" color="primary" [routerLink]="['/places/discover-places/',loadedPlaces[0].id]">
+            <ion-button fill="clear" color="primary" [routerLink]="['/places/discover-places/',recommendePlaces[0].id]">
               Show More
             </ion-button>
           </div>
@@ -47,7 +59,7 @@
     <ion-row>
       <ion-col size-md="8" offset-md="2" class="ion-text-center">
         <!-- Detail in ion-item gives a forward arrow to it which indicates that it will go forward -->
-        <ion-item *ngFor="let i of loadedPlaces.slice(1)" 
+        <ion-item *ngFor="let i of recommendePlaces.slice(1)" 
         [routerLink]="['/places/discover-places/',i.id]"
         detail>
           <ion-thumbnail slot="start">

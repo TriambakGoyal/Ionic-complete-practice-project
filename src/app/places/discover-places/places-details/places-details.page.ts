@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
+import { AuthService } from 'src/app/auth/auth.service';
 import { MakeBookingComponent } from '../../../bookings/make-booking/make-booking.component';
 import { Places } from '../../places.model';
 import { PlacesService } from '../../places.service';
@@ -13,11 +14,13 @@ import { PlacesService } from '../../places.service';
 export class PlacesDetailsPage implements OnInit {
 
   loadedPlace:Places;
+  userId:string;
   constructor(
     private activatedRoute:ActivatedRoute,
     private placeService:PlacesService,
     private route:Router,
-    private modelController:ModalController
+    private modelController:ModalController,
+    private authService:AuthService
   ) { }
 
   ngOnInit() {
@@ -32,6 +35,7 @@ export class PlacesDetailsPage implements OnInit {
         }
         const placeId=paramMap.get('placeId')
         this.loadedPlace=this.placeService.getPlace(placeId);
+        this.userId=this.authService.userId
       }
     )
   }

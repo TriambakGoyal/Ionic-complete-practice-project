@@ -1,7 +1,8 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
+import { LoadingController, ModalController } from '@ionic/angular';
 import { Places } from 'src/app/places/places.model';
+import { BookingsService } from '../bookings.service';
 
 @Component({
   selector: 'app-make-booking',
@@ -16,7 +17,9 @@ export class MakeBookingComponent implements OnInit {
   @ViewChild('form',{static:true}) form:NgForm;
 
   constructor(
-    private modalController:ModalController
+    private modalController:ModalController,
+    private bookinService:BookingsService,
+    private loadingController:LoadingController
   ) { }
 
   ngOnInit() {}
@@ -27,13 +30,39 @@ export class MakeBookingComponent implements OnInit {
   }
   onBookPlace(form:any)
   {
-      this.modalController.dismiss({message:'Congratulations!! You have booked the Place',
-    bookingData:{
-      Name:this.form.value['name'],
-      Guest:this.form.value['guests'],
-      from:this.form.value['bookfrom'],
-      to:this.form.value['bookto']
-    }},'confirm')
+    //Plus is included to make it a number type
+    
+
+      this.loadingController.create({
+        spinner:'lines',
+        keyboardClose:true,
+        backdropDismiss:false,
+        message:'Please Wait while your booking is beign created'
+      }).then(ele=>
+        {
+          ele.present();
+          this.bookinService.addBooking(
+            this.selectedPlace.id,
+            this.selectedPlace.name,
+            this.selectedPlace.imageUrl,
+            +this.form.value['guests'],
+            this.form.value['name'],
+            new Date(this.form.value['bookfrom']),
+            new Date(this.form.value['bookto'])
+          );
+          setTimeout(()=>
+            {
+             ele.dismiss();
+             this.modalController.dismiss({message:'Congratulations!! You have booked the Place',
+              bookingData:{
+              Name:this.form.value['name'],
+              Guest:this.form.value['guests'],
+              from:this.form.value['bookfrom'],
+              to:this.form.value['bookto']
+              }},'confirm')
+            },1000)
+        })
+      
   }
 
   dateValid()

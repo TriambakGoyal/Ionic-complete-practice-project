@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import { AuthService } from '../auth/auth.service';
 import { Booking } from './bookings.model';
 
 @Injectable({
@@ -9,36 +10,41 @@ export class BookingsService {
 
   public bookingChange = new Subject<Booking[]>();
 
-  private _bookings:Booking[]=[
-    {
-      id:'b1',
-      placeId:'p4',
-      userId:'u1',
-      placeName:'New York',
-      guestNumber:5
-    },
-    {
-      id:'b2',
-      placeId:'p5',
-      userId:'u1',
-      placeName:'Britain',
-      guestNumber:4
-    },
-    {
-      id:'b3',
-      placeId:'p6',
-      userId:'u1',
-      placeName:'Hyderabad',
-      guestNumber:2
-    }
-  ];
-  constructor() { }
+  private _bookings:Booking[]=[];
+
+  constructor(
+    private authService:AuthService
+  ) { }
 
   get allBookings()
   {
     return [...this._bookings]
   }
 
+  addBooking(
+    placeId:string,
+    placeName:string,
+    placeImgUrl:string,
+    guestNumber:number,
+    userName:string,
+    dateFrom:Date,
+    dateTo:Date
+  )
+  {
+    const booking = new Booking(
+      Math.random().toString(),
+      placeId,
+      this.authService.userId,
+      placeName,
+      placeImgUrl,
+      guestNumber,
+      userName,
+      dateFrom,
+      dateTo
+    )
+    this._bookings.push(booking);
+    this.bookingChange.next(this._bookings);
+  }
   delete_booking(bookId:string)
   {
     this._bookings=this._bookings.filter(element=>
