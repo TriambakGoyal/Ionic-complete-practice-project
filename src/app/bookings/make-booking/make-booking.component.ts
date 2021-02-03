@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { LoadingController, ModalController } from '@ionic/angular';
-import { Places } from 'src/app/places/places.model';
+import { Places } from '../../places/places.model';
 import { BookingsService } from '../bookings.service';
 
 @Component({
