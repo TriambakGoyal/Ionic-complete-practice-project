@@ -7,7 +7,7 @@
       </ion-buttons>
     <ion-title>New Offers</ion-title>
     <ion-buttons slot='primary'>
-<ion-button (click)="onCreateOffer()" color='dark' [disabled]="form.invalid">
+<ion-button (click)="onCreateOffer()" color='dark' [disabled]="form.invalid || !form.get('imageFile').value">
   <ion-icon name='checkmark' slot='icon-only'>
 
   </ion-icon>
@@ -79,6 +79,11 @@
     <ion-row>
       <ion-col class="ion-text-center">
         <app-location-picker></app-location-picker>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="ion-text-center">
+        <app-image-picker (imgPick)="pickedImage($event)"></app-image-picker>
       </ion-col>
     </ion-row>
   </ion-grid>
