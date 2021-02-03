@@ -1,7 +1,50 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/internal/Subject';
 import { AuthService } from '../auth/auth.service';
 import { Places } from './places.model';
+import { tap, map, subscribeOn, switchMap } from 'rxjs/operators';
+import { of } from 'rxjs';
+
+interface Place{
+      dateFrom: string,
+      dateTo: string,
+      desc: string,
+      imageUrl: string,
+      name: string,
+      price: number,
+      userId: string
+}
+//    new Places(
+//     'p1',
+//     'Bhopal',
+//     'City of Lakes',
+//     'https://www.icsi.edu/media/filer_public/f4/81/f48141e6-e918-441d-9aeb-da0083fb21ea/lead.jpg',
+//     500,
+//     new Date('2020-01-20'),
+//     new Date('2021-01-20'),
+//     'xyz'
+//     ),
+//     new Places(
+//       'p2',
+//       'Bangalore',
+//       'Silicon Valley of India',
+// '      https://cms.qz.com/wp-content/uploads/2017/08/bangalore1-reuters-traffic-moves-along-a-road-in-the-southern-indian-city-of-bangalore-december-14-2005.jpg?quality=75&strip=all&w=900&h=900&crop=1'  ,
+//         1000,
+//         new Date('2020-01-20'),
+//         new Date('2021-01-20'),
+//         'abc'
+//       ),
+//       new Places(
+//         'p3',
+//         'Kolkata',
+//         'Garden City of India',
+//         'https://cdn.britannica.com/91/110191-050-7BCFD56B/Victoria-Memorial-Hall-Kolkata-India.jpg',
+//         800,
+//         new Date('2020-01-20'),
+//         new Date('2021-01-20'),
+//         'abc'
+//         ),
 
 @Injectable({
   providedIn: 'root'
@@ -9,53 +52,76 @@ import { Places } from './places.model';
 export class PlacesService {
 
   updatePlaces = new Subject<Places[]>()
-  private _places:Places[]=[
-   new Places(
-    'p1',
-    'Bhopal',
-    'City of Lakes',
-    'https://www.icsi.edu/media/filer_public/f4/81/f48141e6-e918-441d-9aeb-da0083fb21ea/lead.jpg',
-    500,
-    new Date('2020-01-20').toISOString(),
-    new Date('2021-01-20').toISOString(),
-    'xyz'
-    ),
-    new Places(
-      'p2',
-      'Bangalore',
-      'Silicon Valley of India',
-'      https://cms.qz.com/wp-content/uploads/2017/08/bangalore1-reuters-traffic-moves-along-a-road-in-the-southern-indian-city-of-bangalore-december-14-2005.jpg?quality=75&strip=all&w=900&h=900&crop=1'  ,
-        1000,
-        new Date('2020-01-20').toISOString(),
-        new Date('2021-01-20').toISOString(),
-        'abc'
-      ),
-      new Places(
-        'p3',
-        'Kolkata',
-        'Garden City of India',
-        'https://cdn.britannica.com/91/110191-050-7BCFD56B/Victoria-Memorial-Hall-Kolkata-India.jpg',
-        800,
-        new Date('2020-01-20').toISOString(),
-        new Date('2021-01-20').toISOString(),
-        'abc'
-        ),
-  ];
+  private _places:Places[]=[];
   
-  constructor( private authService:AuthService) { }
+  constructor( private authService:AuthService,
+    private http:HttpClient) { }
 
   getAllPlaces()
   {
     return [...this._places]
   }
 
+  // Getting all the data from the Firebase API
+  public fetchAllPlaces(){
+
+  return this.http.get<{[key:string]:Place}>('https://nimble-service-290818-default-rtdb.firebaseio.com/offers-detail.json').
+  pipe(map(result=>
+    {
+      const places=[];
+        for(const key in result)
+        { 
+          if(result.hasOwnProperty(key))
+          {
+            places.push(new Places(
+              key,result[key].name,
+              result[key].desc,
+              result[key].imageUrl,
+              result[key].price,
+              new Date(result[key].dateFrom),
+              new Date(result[key].dateTo),
+              result[key].userId))
+          }
+         
+        }
+        return places
+    }),tap(places=>
+      {
+        this._places=places;
+        this.updatePlaces.next(this._places)
+      }))
+  }
+
+  getSinglePlace(placeId:string)
+  {
+    return this.http.get<Place>(`https://nimble-service-290818-default-rtdb.firebaseio.com/offers-detail/${placeId}.json`).pipe(
+      map(result=>
+        {
+          return new Places(
+              placeId,
+              result['name'],
+              result['desc'],
+              result['imageUrl'],
+              result['price'],
+              new Date(result['dateFrom']),
+              new Date(result['dateTo']),
+              result['userId']);
+            
+        })
+    )
+
+   
+  }
+
   getPlace(placeId:string)
   {
-    return {...this._places.find(place =>
+     return {...this._places.find(place =>
       {
         return place.id === placeId;
       })}
   }
+
+  // Posting New data to the Firebase API
 
   addPlace(name:string,
     description:string,
@@ -68,12 +134,49 @@ export class PlacesService {
       description,
       'https://cdn.britannica.com/91/110191-050-7BCFD56B/Victoria-Memorial-Hall-Kolkata-India.jpg',
       price,
-      datefrom,
-      dateto,
+      new Date(datefrom),
+      new Date(dateto),
       this.authService.userId);
 
-      this._places.push(newPlace);
-      this.updatePlaces.next(this._places);
+      // .json needs to be added after the folder name we are creating in the database place
+      this.http.post('https://nimble-service-290818-default-rtdb.firebaseio.com/offers-detail.json',{
+        //this will pass whole object to the request
+        ...newPlace,
+        id:null //this is done so that the id must automatically get generated by firebase not the math.random
+      }).subscribe()
+
+      // this._places.push(newPlace);
+      // this.updatePlaces.next(this._places);
   }
 
+  UpdateInfoPlace(placeId:string,placeName:string,placeDesc:string)
+  {
+    let updatedPlaces:any[];
+            updatedPlaces=this._places;
+          const updatedPlaceIndex = this._places.findIndex(pl => pl.id == placeId)
+          const oldPlace= updatedPlaces[updatedPlaceIndex];
+  
+           updatedPlaces[updatedPlaceIndex]= new Places(
+         placeId,
+        placeName,
+        placeDesc,
+        oldPlace.imageUrl,
+        oldPlace.price,
+        oldPlace.dateFrom,
+        oldPlace.dateTo,
+        oldPlace.userId
+      )
+      
+      return this.http.put(`https://nimble-service-290818-default-rtdb.firebaseio.com/offers-detail/${placeId}.json`,
+      {...updatedPlaces[updatedPlaceIndex],id:null}).pipe(pl=>
+        {
+          console.log(this._places)
+          this._places=updatedPlaces
+          this.updatePlaces.next(this._places);
+          return pl
+        });
+        
+    }
+  
 }
+ 

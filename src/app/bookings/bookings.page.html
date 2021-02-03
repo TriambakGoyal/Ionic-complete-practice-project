@@ -9,12 +9,24 @@
 </ion-header>
 
 <ion-content>
-
-  <ion-grid>
+<div *ngIf="isLoading" class="ion-text-center ion-padding">
+  <ion-spinner></ion-spinner>
+</div>
+<ion-grid *ngIf="!isLoading && (!loadedBooking || loadedBooking.length<=0)">
+  <ion-row>
+    <ion-col class="ion-text-center ion-padding">
+      No Bookings Found
+    </ion-col>
+  </ion-row>
+</ion-grid>
+  <ion-grid *ngIf="!isLoading && (loadedBooking || loadedBooking.length > 0)">
     <ion-row *ngFor="let i of loadedBooking">
       <ion-col size='12' size-md='6' offset-md="3">
         <ion-item-sliding #slider>
           <ion-item>
+            <ion-avatar slot='start'>
+              <ion-img [src]="i.placeImgUrl"></ion-img>
+            </ion-avatar>
             <ion-label>
               <h2>{{i.placeName}}</h2>
               <ion-text>No. of Guest: {{i.guestNumber}}</ion-text>

@@ -18,7 +18,7 @@ const routes: Routes = [
       },
       {
         path:'',
-        redirectTo:'/places/discover-places/',
+        redirectTo:'/places/discover-places',
         pathMatch:'full'
       }
     ]

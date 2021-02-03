@@ -14,7 +14,7 @@ import { PlacesService } from '../places.service';
 export class OfferPage implements OnInit, OnDestroy {
 
   loadedPlaces:Places[];
-
+  isLoading=false
   updatePlaceSubscription:Subscription;
 
   constructor(private placesService:PlacesService,
@@ -28,6 +28,7 @@ export class OfferPage implements OnInit, OnDestroy {
       {
         return place.userId == this.authService.userId
       });
+
     this.updatePlaceSubscription=this.placesService.updatePlaces.subscribe(
       places=>
       {
@@ -42,8 +43,16 @@ export class OfferPage implements OnInit, OnDestroy {
   ionViewDidEnter()
   {
     this.menucontrl.enable(true,'menu1')
-
     console.log('Offer Did Enter')
+    
+  }
+  ionViewWillEnter()
+  {   
+    this.isLoading=true
+    this.placesService.fetchAllPlaces().subscribe(()=>
+    {
+      this.isLoading=false;
+    })
   }
   
   

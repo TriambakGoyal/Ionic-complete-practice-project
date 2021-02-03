@@ -5,22 +5,25 @@
         <ion-icon name='arrow-back-outline'></ion-icon>
       </ion-back-button>
     </ion-buttons>
-    <ion-title>{{loadedPlace.name}}</ion-title>
+    <ion-title>{{loadedPlace?.name}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-grid class="ion-no-padding">
+  <div class="ion-text-center ion-padding" *ngIf='isLoading'>
+    <ion-spinner></ion-spinner>
+  </div>
+  <ion-grid class="ion-no-padding" *ngIf='!isLoading'>
     <ion-row>
       <ion-col>
-        <ion-img [src]="loadedPlace.imageUrl">
+        <ion-img [src]="loadedPlace?.imageUrl">
         </ion-img>
       </ion-col>
     </ion-row>
     <ion-row class="ion-padding">
       <ion-col>
         <h2 style="text-align: center;">
-          {{loadedPlace.desc}}
+          {{loadedPlace?.desc}}
         </h2>
       </ion-col>
     </ion-row>
@@ -32,7 +35,7 @@
           </ion-label>
         </ion-row>
         <ion-row  style="justify-content: center;" class="ion-padding">
-          <ion-text>{{loadedPlace.dateFrom |date}}</ion-text>
+          <ion-text>{{loadedPlace?.dateFrom |date}}</ion-text>
         </ion-row>
       </ion-col>
       <ion-col>
@@ -42,18 +45,18 @@
           </ion-label>
         </ion-row>
         <ion-row style="justify-content: center;" class="ion-padding">
-          <ion-text style="text-align: center;">{{loadedPlace.dateTo |date}}</ion-text>
+          <ion-text style="text-align: center;">{{loadedPlace?.dateTo |date}}</ion-text>
         </ion-row>
       </ion-col>
     </ion-row>
-    <ion-row *ngIf='loadedPlace.userId !== userId'>
+    <ion-row *ngIf='loadedPlace?.userId !== userId'>
       <ion-col style="display: flex;justify-content: center;">
         <ion-button class="ion-margin" (click)="onBook()">
           Book
         </ion-button>
       </ion-col>
     </ion-row>
-    <ion-row *ngIf='loadedPlace.userId === userId'>
+    <ion-row *ngIf='loadedPlace?.userId === userId'>
       <ion-col style="display: flex;justify-content: center;">
         <ion-label class='ion-text-center'>
           You Cannot book this place

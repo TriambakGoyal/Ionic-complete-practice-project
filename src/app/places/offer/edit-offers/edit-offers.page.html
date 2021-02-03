@@ -7,9 +7,8 @@
       </ion-buttons>
     <ion-title>Edit Offers</ion-title>
     <ion-buttons slot='primary'>
-      <ion-button (click)="onEditOffer()" color='dark' [disabled]="form.invalid">
+      <ion-button (click)="onEditOffer()" color='dark' [disabled]="form?.invalid">
         <ion-icon name='checkmark' slot='icon-only'>
-      
         </ion-icon>
       </ion-button>
           </ion-buttons>
@@ -17,7 +16,10 @@
 </ion-header>
 
 <ion-content>
-  <form [formGroup]='form'>
+  <div *ngIf='isLoading' class="ion-text-center ion-padding">
+    <ion-spinner color='primary'></ion-spinner>
+  </div>
+  <form [formGroup]="form" *ngIf='!isLoading'>
     <ion-grid>
       <ion-row>
         <ion-col>
@@ -38,7 +40,7 @@
             <ion-textarea rows='4' formControlName='description' (ionChange)="charCount()"></ion-textarea>
           </ion-item>
           <p [ngStyle]="Count>180 || Count==0?{'color':'red'}:{'color':'green'}" style='text-align: right;margin:5px;'>{{Count}}/180</p>
-          <ion-item lines='none' *ngIf="form.get('description').invalid && form.get('description').touched ">
+          <ion-item lines='none' *ngIf="form?.get('description').invalid && form?.get('description').touched ">
             <ion-text>
               Description must contain only character between 1 and 180
             </ion-text>

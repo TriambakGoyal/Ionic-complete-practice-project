@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { IonItemSliding, MenuController } from '@ionic/angular';
+import { IonItemSliding, LoadingController, MenuController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { Booking } from './bookings.model';
 import { BookingsService } from './bookings.service';
@@ -12,23 +12,25 @@ import { BookingsService } from './bookings.service';
 export class BookingsPage implements OnInit, OnDestroy{
 
   loadedBooking:Booking[];
-
+  isLoading=true
   bookSubscription:Subscription;
 
   constructor(
     private bookingService:BookingsService,
-    private menucontrl:MenuController
+    private menucontrl:MenuController,
+    private loadingController:LoadingController
   ) { }
 
   ngOnInit() {
-    this.loadedBooking=this.bookingService.allBookings
-
-    this.bookSubscription=this.bookingService.bookingChange.subscribe(
-      booking=>
+    this.bookSubscription=this.bookingService.allBookings.subscribe(bookings =>
       {
-        this.loadedBooking=booking;
-      }
-    )
+        this.loadedBooking=bookings
+      })
+  }
+  ionViewWillEnter(){
+    this.bookingService.fetchAllBookings().subscribe(
+      ()=> this.isLoading=false
+    );
   }
   ionViewDidEnter()
   {
@@ -40,7 +42,25 @@ export class BookingsPage implements OnInit, OnDestroy{
   {
     slider.close();
 
-    this.bookingService.delete_booking(bookingId);
+    this.loadingController.create(
+      {
+        backdropDismiss:false,
+        keyboardClose:true,
+        spinner:'lines',
+        message:'Please wait while we cancel your booking....'
+      }
+    ).then(
+      ele=>
+      {
+        ele.present();
+        this.bookingService.delete_booking(bookingId).subscribe(
+          ()=>
+          {
+            ele.dismiss();
+          });
+    }
+    )
+    
   }
 
   ngOnDestroy()

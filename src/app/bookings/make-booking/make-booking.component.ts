@@ -31,13 +31,12 @@ export class MakeBookingComponent implements OnInit {
   onBookPlace(form:any)
   {
     //Plus is included to make it a number type
-    
-
+  
       this.loadingController.create({
         spinner:'lines',
         keyboardClose:true,
         backdropDismiss:false,
-        message:'Please Wait while your booking is beign created'
+        message:'Please Wait while your booking is being created'
       }).then(ele=>
         {
           ele.present();
@@ -49,18 +48,19 @@ export class MakeBookingComponent implements OnInit {
             this.form.value['name'],
             new Date(this.form.value['bookfrom']),
             new Date(this.form.value['bookto'])
-          );
-          setTimeout(()=>
+          ).subscribe(
+            result=>
             {
-             ele.dismiss();
-             this.modalController.dismiss({message:'Congratulations!! You have booked the Place',
+              ele.dismiss();
+              this.modalController.dismiss({message:'Congratulations!! You have booked the Place',
               bookingData:{
               Name:this.form.value['name'],
               Guest:this.form.value['guests'],
               from:this.form.value['bookfrom'],
               to:this.form.value['bookto']
               }},'confirm')
-            },1000)
+            }
+          );
         })
       
   }

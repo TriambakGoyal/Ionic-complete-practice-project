@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuController } from '@ionic/angular';
+import { LoadingController, MenuController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 import { Places } from '../places.model';
@@ -14,16 +14,37 @@ export class DiscoverPlacesPage implements OnInit {
 
   loadedPlaces:Places[];
   recommendePlaces:Places[];
+  isLoading=true
   updatePlaceSubscription: Subscription;
   constructor(
     private placesService:PlacesService,
     private menucontrl:MenuController,
-    private authService:AuthService
+    private authService:AuthService,
+    private loadingController:LoadingController
   ) { }
 
   ngOnInit() {
-    this.loadedPlaces=this.placesService.getAllPlaces();
-    this.recommendePlaces=this.loadedPlaces;
+
+    this.loadingController.create({
+      backdropDismiss:false,
+      spinner:'lines',
+      keyboardClose:true,
+      message:'Loading places'
+    }).then(element=>
+      {
+        element.present();
+        this.isLoading=true
+        this.placesService.fetchAllPlaces().subscribe(result=>
+          {
+            this.isLoading=false
+
+            element.dismiss();
+          })
+        
+      });
+      
+      this.loadedPlaces=this.placesService.getAllPlaces();
+      this.recommendePlaces=this.loadedPlaces;
     this.updatePlaceSubscription=this.placesService.updatePlaces.subscribe(
       places=>
       {
@@ -38,16 +59,30 @@ export class DiscoverPlacesPage implements OnInit {
   {
     this.menucontrl.enable(true,'menu1')
     console.log('Discover Did Enter')
+    
 
+  }
+  ionViewWillEnter()
+  {
+    
   }
   onFilterUpdate(event:any){
     console.log(event.detail.value)
+
     if(event.detail.value=== 'all')
     {
-      this.recommendePlaces=this.loadedPlaces
+      if(this.loadedPlaces)
+      {
+        this.recommendePlaces=this.loadedPlaces
+
+      }
     }
     else{
-      this.recommendePlaces = this.loadedPlaces.filter(place=> place.userId !== this.authService.userId);
+      if(this.loadedPlaces)
+      {
+        this.recommendePlaces = this.loadedPlaces.filter(place=> place.userId !== this.authService.userId);
+
+      }
     }
   }
   ngOnDestroy()

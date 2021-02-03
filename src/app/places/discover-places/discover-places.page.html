@@ -13,10 +13,10 @@
   <ion-segment-button value='all'>All Places</ion-segment-button>
   <ion-segment-button value='rec'>Recommended</ion-segment-button>
 </ion-segment>
-<ion-grid>
+<ion-grid  *ngIf="(!recommendePlaces || recommendePlaces.length <= 0) && !isLoading">
   <ion-row>
     <ion-col class="ion-justify-content-center">
-      <ion-item *ngIf="!recommendePlaces || recommendePlaces.length <= 0">
+      <ion-item>
         <ion-label style="text-align: center;">
           No places recommended
         </ion-label>
@@ -25,7 +25,7 @@
   </ion-row>
 </ion-grid>
 
-  <ion-grid *ngIf="recommendePlaces.length > 0">
+  <ion-grid *ngIf="recommendePlaces.length > 0 && !isLoading" class="ion-no-padding">
     <ion-row>
       <ion-col size-md="8" offset-md="2" class="ion-text-center">
         <ion-card>

@@ -1,7 +1,9 @@
+import { error } from '@angular/compiler/src/util';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ModalController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { AuthService } from 'src/app/auth/auth.service';
+import { BookingsService } from 'src/app/bookings/bookings.service';
 import { MakeBookingComponent } from '../../../bookings/make-booking/make-booking.component';
 import { Places } from '../../places.model';
 import { PlacesService } from '../../places.service';
@@ -14,13 +16,16 @@ import { PlacesService } from '../../places.service';
 export class PlacesDetailsPage implements OnInit {
 
   loadedPlace:Places;
+  isLoading=true;
   userId:string;
   constructor(
     private activatedRoute:ActivatedRoute,
     private placeService:PlacesService,
     private route:Router,
     private modelController:ModalController,
-    private authService:AuthService
+    private authService:AuthService,
+    private alertController:AlertController,
+    private bookingService:BookingsService
   ) { }
 
   ngOnInit() {
@@ -33,12 +38,37 @@ export class PlacesDetailsPage implements OnInit {
           this.route.navigateByUrl('/places/discover-places')
           return
         }
-        const placeId=paramMap.get('placeId')
-        this.loadedPlace=this.placeService.getPlace(placeId);
-        this.userId=this.authService.userId
+      const placeId=paramMap.get('placeId')
+
+      // this.loadedPlace= this.placeService.getPlace(placeId)
+      this.placeService.getSinglePlace(placeId).subscribe(
+        result =>
+        {
+          this.loadedPlace=result;
+          this.isLoading=false;
+        },
+        error=>
+        {
+          this.alertController.create(
+            {
+              message:"An Error occurred!",
+              buttons:[{
+                text:"Okay",
+                handler:()=>
+                {
+                  this.route.navigateByUrl('places/discover-places')
+                }
+              }]
+            }
+          )
+        }
+      )
+      this.userId=this.authService.userId
       }
     )
   }
+
+
   onBook(){
     this.modelController.create({
       component:MakeBookingComponent,
