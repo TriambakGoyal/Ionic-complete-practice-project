@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonItemSliding, MenuController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { Places } from '../places.model';
 import { PlacesService } from '../places.service';
@@ -24,17 +25,30 @@ export class OfferPage implements OnInit, OnDestroy {
     ) { }
 
   ngOnInit() {
-    this.loadedPlaces=this.placesService.getAllPlaces().filter(place=>
+    let UserId:string;
+    this.authService.userId.pipe(take(1)).subscribe(
+      userId=>
       {
-        return place.userId == this.authService.userId
-      });
+        if(!userId)
+        {
+          throw new Error("No User id")
+        }
+        UserId=userId
+        this.loadedPlaces=this.placesService.getAllPlaces().filter(place=>
+          {
+            return place.userId == userId
+          });
+      }
+     
+    )
+   
 
     this.updatePlaceSubscription=this.placesService.updatePlaces.subscribe(
       places=>
       {
         this.loadedPlaces=places.filter(place=>
           {
-            return place.userId == this.authService.userId
+            return place.userId == UserId
           });
       }
     )

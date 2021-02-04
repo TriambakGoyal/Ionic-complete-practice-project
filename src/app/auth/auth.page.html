@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>auth</ion-title>
+    <ion-title>{{!isLogin?'Create Account':'Login'}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -38,13 +38,20 @@
       </ion-col>
     </ion-row>
     <ion-row class="ion-justify-content-center">
-      <ion-col size='4'>
+      <ion-col class="ion-text-center">
+        <ion-button fill="clear" class="ion-margin ion-align-self-center" color="primary" (click)="onSwitchMode()">
+          Switch to {{isLogin?'Sign Up':'Login'}}
+        </ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row class="ion-justify-content-center">
+      <ion-col class="ion-text-center">
         <ion-button type='submit' [disabled]="form?.errors || form?.invalid" class="ion-margin ion-align-self-center" color="dark">
-          Login
+          {{!isLogin?'Sign Up':'Login'}}
         </ion-button>
-        <ion-button type='submit' class="ion-margin ion-align-self-center" color="primary" (click)="onLogin()">
+        <!-- <ion-button type='submit' class="ion-margin ion-align-self-center" color="primary" (click)="onLogin()">
           Login
-        </ion-button>
+        </ion-button> -->
       </ion-col>
     </ion-row>
   </ion-grid>

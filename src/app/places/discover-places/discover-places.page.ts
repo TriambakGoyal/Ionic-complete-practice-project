@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, MenuController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { AuthService } from '../../auth/auth.service';
 import { Places } from '../places.model';
 import { PlacesService } from '../places.service';
@@ -69,21 +70,27 @@ export class DiscoverPlacesPage implements OnInit {
   onFilterUpdate(event:any){
     console.log(event.detail.value)
 
-    if(event.detail.value=== 'all')
-    {
-      if(this.loadedPlaces)
+    this.authService.userId.pipe(take(1)).subscribe(
+      userId =>
       {
-        this.recommendePlaces=this.loadedPlaces
-
+        if(event.detail.value=== 'all')
+        {
+          if(this.loadedPlaces)
+          {
+            this.recommendePlaces=this.loadedPlaces
+    
+          }
+        }
+        else{
+          if(this.loadedPlaces)
+          {
+            this.recommendePlaces = this.loadedPlaces.filter(place=> place.userId !== userId);
+    
+          }
+        }
       }
-    }
-    else{
-      if(this.loadedPlaces)
-      {
-        this.recommendePlaces = this.loadedPlaces.filter(place=> place.userId !== this.authService.userId);
-
-      }
-    }
+    )
+   
   }
   ngOnDestroy()
   {

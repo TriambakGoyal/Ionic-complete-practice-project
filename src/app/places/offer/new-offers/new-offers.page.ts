@@ -72,15 +72,16 @@ export class NewOffersPage implements OnInit {
             updateOn:'blur',
             validators:[Validators.required]
           }
-        ),
-        imageFile:new FormControl(null)
+        )
+        // imageFile:new FormControl(null)
 
       }
     )
   }
   onCreateOffer(){
     
-    if(this.form.invalid || !this.form.get('imageFile').value)
+    // if(this.form.invalid || !this.form.get('imageFile').value)
+    if(this.form.invalid)
     {
       return;
     }
@@ -120,7 +121,7 @@ export class NewOffersPage implements OnInit {
     if(typeof imgData==='string')
     {
       try{
-       imgFile=base64toBlob(imgData.replace('date:/jpeg;base64',''),'image/jpeg') //convert base64 to file and the second argument tells the image type
+       imgFile=base64toBlob(imgData.replace("date:/jpeg;base64",""),'image/jpeg') //convert base64 to file and the second argument tells the image type
 
       }
       catch(error){
@@ -132,7 +133,7 @@ export class NewOffersPage implements OnInit {
       imgFile=imgData;
     }
 
-    this.form.patchValue({imageFile:imgFile}); // patchValue attach value to formcontrol
+    // this.form.patchValue({imageFile:imgFile}); // patchValue attach value to formcontrol
   }
 
 }

@@ -40,7 +40,7 @@ export class ImagePickerComponent implements OnInit {
       Plugins.Camera.getPhoto({
         quality:50, //Ranges between 1-100
         source:CameraSource.Prompt, //To let user choose whether he wants to click image or upload from gallery
-        correctOrientation:true, //to have fixed orientation of img
+        correctOrientation:false, //to have fixed orientation of img
         width:300,
         resultType:CameraResultType.DataUrl // to encode image in the string
       }).then(image=>

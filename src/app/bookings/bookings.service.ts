@@ -44,20 +44,28 @@ export class BookingsService {
   )
   {
     let genId:string;
-    const newBooking = new Booking(
-      Math.random().toString(),
-      placeId,
-      this.authService.userId,
-      placeName,
-      placeImgUrl,
-      guestNumber,
-      userName,
-      dateFrom,
-      dateTo
-    )
-
-    return this.http.post<{name:string}>('https://nimble-service-290818-default-rtdb.firebaseio.com/bookings.json',
-    {...newBooking,id:null}).pipe(
+    let newBooking:Booking;
+   return this.authService.userId.pipe(take(1),
+    switchMap(userId=>
+      {
+        if(!userId)
+        {
+          throw new Error("No user ID found");
+        }
+        newBooking = new Booking(
+          Math.random().toString(),
+          placeId,
+          userId,
+          placeName,
+          placeImgUrl,
+          guestNumber,
+          userName,
+          dateFrom,
+          dateTo
+        );
+        return this.http.post<{name:string}>('https://nimble-service-290818-default-rtdb.firebaseio.com/bookings.json',
+        {...newBooking,id:null})
+      }),
       switchMap(resData =>
         {
           genId=resData.name;
@@ -76,10 +84,18 @@ export class BookingsService {
 
   fetchAllBookings()
   {
-    //orderBy="userId"&equalTo="${} ==> this is a firebase feature and says that order the list by userId where userId is equal to authenticate User Id"
+    return this.authService.userId.pipe(take(1),switchMap(
+      userId=>
+      {
+        if(!userId)
+        {
+          throw new Error("User not found")
+        }
+            //orderBy="userId"&equalTo="${} ==> this is a firebase feature and says that order the list by userId where userId is equal to authenticate User Id"
     // We also need to set some settings in the firebase
-    return this.http.get<{[key:string]:BookingData}>(`https://nimble-service-290818-default-rtdb.firebaseio.com/bookings.json?orderBy="userId"&equalTo="${this.authService.userId}"`)
-    .pipe(
+        return this.http.get<{[key:string]:BookingData}>(`https://nimble-service-290818-default-rtdb.firebaseio.com/bookings.json?orderBy="userId"&equalTo="${userId}"`);
+      }
+    ),
       map(bookingData=>
         {
           const bookings=[];

@@ -2,6 +2,7 @@ import { error } from '@angular/compiler/src/util';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, ModalController } from '@ionic/angular';
+import { switchMap, take } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { BookingsService } from 'src/app/bookings/bookings.service';
 import { MakeBookingComponent } from '../../../bookings/make-booking/make-booking.component';
@@ -39,13 +40,27 @@ export class PlacesDetailsPage implements OnInit {
           return
         }
       const placeId=paramMap.get('placeId')
-
+      let fetchUserId:string;
       // this.loadedPlace= this.placeService.getPlace(placeId)
-      this.placeService.getSinglePlace(placeId).subscribe(
+      this.authService.userId.pipe(take(1),
+        switchMap(
+          userId =>
+          {
+            if(!userId)
+            {
+              throw new Error("No User id found")
+            }
+            fetchUserId=userId
+            return this.placeService.getSinglePlace(placeId)
+
+          }
+        )
+      ).subscribe(
         result =>
         {
           this.loadedPlace=result;
           this.isLoading=false;
+          this.userId=fetchUserId
         },
         error=>
         {
@@ -63,7 +78,6 @@ export class PlacesDetailsPage implements OnInit {
           )
         }
       )
-      this.userId=this.authService.userId
       }
     )
   }
