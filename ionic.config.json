@@ -1,7 +1,8 @@
 {
   "name": "booking-app",
   "integrations": {
-    "capacitor": {}
+    "capacitor": {},
+    "cordova": {}
   },
   "type": "angular"
 }
