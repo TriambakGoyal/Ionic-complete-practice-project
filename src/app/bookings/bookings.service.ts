@@ -45,17 +45,29 @@ export class BookingsService {
   {
     let genId:string;
     let newBooking:Booking;
+    let fetchId:string;
+
    return this.authService.userId.pipe(take(1),
-    switchMap(userId=>
+   switchMap(userId=>
+    {
+      if(!userId)
       {
-        if(!userId)
+        throw new Error("No user ID found");
+      }
+      fetchId=userId
+      return this.authService.token;
+    }),
+    take(1),
+    switchMap(token=>
+      {
+        if(!token)
         {
           throw new Error("No user ID found");
         }
         newBooking = new Booking(
           Math.random().toString(),
           placeId,
-          userId,
+          fetchId,
           placeName,
           placeImgUrl,
           guestNumber,
@@ -63,7 +75,7 @@ export class BookingsService {
           dateFrom,
           dateTo
         );
-        return this.http.post<{name:string}>('https://nimble-service-290818-default-rtdb.firebaseio.com/bookings.json',
+        return this.http.post<{name:string}>(`https://nimble-service-290818-default-rtdb.firebaseio.com/bookings.json?auth=${token}`,
         {...newBooking,id:null})
       }),
       switchMap(resData =>
@@ -84,16 +96,29 @@ export class BookingsService {
 
   fetchAllBookings()
   {
-    return this.authService.userId.pipe(take(1),switchMap(
-      userId=>
+    let fetchId:string;
+
+  return this.authService.userId.pipe(take(1),
+    switchMap(userId=>
       {
         if(!userId)
         {
           throw new Error("User not found")
         }
+        fetchId=userId
+        return this.authService.token;
+      }),
+      take(1)
+    ,switchMap(
+      token=>
+      {
+        if(!token)
+        {
+          throw new Error("User not found")
+        }
             //orderBy="userId"&equalTo="${} ==> this is a firebase feature and says that order the list by userId where userId is equal to authenticate User Id"
     // We also need to set some settings in the firebase
-        return this.http.get<{[key:string]:BookingData}>(`https://nimble-service-290818-default-rtdb.firebaseio.com/bookings.json?orderBy="userId"&equalTo="${userId}"`);
+        return this.http.get<{[key:string]:BookingData}>(`https://nimble-service-290818-default-rtdb.firebaseio.com/bookings.json?orderBy="userId"&equalTo="${fetchId}"&auth=${token}`);
       }
     ),
       map(bookingData=>
@@ -132,7 +157,17 @@ export class BookingsService {
 
    delete_booking(bookId:string)
   {
-    return this.http.delete(`https://nimble-service-290818-default-rtdb.firebaseio.com/bookings/${bookId}.json`).pipe(
+    return this.authService.token.pipe(
+      take(1),
+      switchMap(token=>
+        {
+          if(!token)
+          {
+            throw new Error('token not found')
+          }
+          return this.http.delete(`https://nimble-service-290818-default-rtdb.firebaseio.com/bookings/${bookId}.json?auth=${token}`);
+        }),
+        take(1),
       switchMap(()=>
       {
         return this._bookings;

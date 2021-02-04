@@ -90,6 +90,7 @@ onSubmit(form:NgForm)
   console.log(form)
 
   this.authenticate(email,password)
+  form.reset();
 }
 
 private showAlert(message:string){
